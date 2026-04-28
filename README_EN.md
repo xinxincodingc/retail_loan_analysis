@@ -1,89 +1,130 @@
-# DA5107 Submission Package
+# Retail Loan Analysis
 
-This folder contains a complete and report-ready deliverable.
+![Project highlights overview](project_highlights_overview.svg)
 
-## Main notebook
-- `DA5107_Submission_Complete_EN.ipynb`
+This project evaluates a retail lending business from six connected angles: growth pace, risk pricing, credit screening, data quality, portfolio optimization, and churn retention. The analysis is designed to answer a management question rather than just a modeling question:
 
-This notebook is designed to avoid the Plotly `fig.show()` rendering issue (`nbformat` errors) by using pre-generated static PNG charts and file-based outputs.
+**Should the bank continue expanding its retail loan business, and if so, under what operating model?**
 
-## Folder structure
-- `scripts/`: all analysis code (Python + R)
-- `data/`: key output tables and JSON summaries
-- `figures/`: report charts (PNG)
-- `raw/`: place the original `Assignment_data.csv` here for full rerun
-- `outputs/`: reserved for additional generated files
+The overall conclusion is yes, but with a more selective, risk-disciplined, and analytics-driven strategy.
 
-## Quick start
-1. Open `DA5107_Submission_Complete_EN.ipynb`.
-2. Review sections 1-6 and visuals directly.
-3. If needed, run optional cells to regenerate outputs.
+## Project Snapshot
 
-## Full rerun from raw data (teacher reproducibility)
-If your instructor wants to rerun all models from scratch:
+- Main file: `DA5107_Submission_Complete.ipynb`
+- Format: self-contained, report-ready notebook
+- Scope: business analysis, credit risk, portfolio strategy, and customer retention
+- Dataset scale: 2,147,635 rows and 49 columns
 
-1. Put the original raw file at `5107/raw/Assignment_data.csv` (or use any absolute path).
-2. Install Python and R dependencies.
-3. Run:
+## Why This Project Stands Out
 
-```bash
-cd 5107
-python3 scripts/run_full_pipeline.py --input_csv raw/Assignment_data.csv --clean_work_dir
-```
+- It goes beyond EDA and single-model evaluation. The notebook connects analytics to real lending decisions.
+- It combines business strategy and quantitative modeling in one narrative.
+- It treats risk, profitability, capital allocation, and retention as one integrated system.
+- It does not force one model to solve every problem. Different models are used for different business objectives.
 
-The command refreshes:
-- all model outputs in `data/`
-- all charts in `figures/`
-- intermediate outputs in `outputs/full_rerun/`
+## Key Findings
 
-## Environment setup
-Python:
+### 1. Expansion was initially too aggressive, then became more sustainable
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -U pip
-pip install -r requirements.txt
-```
+From 2012 to 2015, the loan book expanded very quickly:
 
-R:
+- Loan count CAGR: `99.03%`
+- Loan amount CAGR: `107.36%`
+- Resolved charge-off change: `+3.99pp`
 
-```r
-install.packages("ggplot2")
-```
+From 2016 to 2018, growth slowed and realized risk improved:
 
-## Executive Summary
+- Loan count CAGR: `6.76%`
+- Loan amount CAGR: `11.33%`
+- Resolved charge-off change: `-9.58pp`
 
-This report evaluates the performance and future direction of the bank’s retail loan program from 
-business, risk, portfolio, and strategy perspectives. Overall, the evidence suggests that the program should 
-continue, but under a more selective and risk-disciplined model. 
-The business review shows that the bank’s early expansion was too aggressive. From 2012 to 2015, loan 
-count and loan amount grew at very high rates, while credit risk also increased. From 2016 to 2018, 
-growth slowed and risk performance improved, indicating that the bank later corrected to a more 
-sustainable pace. Pricing is directionally reasonable: higher-risk borrowers are charged higher interest 
-rates, and both bad-loan rate and resolved charge-off rate rise clearly across grades. However, risk 
-compensation becomes weaker in the riskiest segments, which means the current pricing strategy is not 
-fully sufficient at the tail end of the portfolio. 
-The credit assessment system is partly effective. The grading framework can rank risk well at portfolio 
-level, but decision accuracy at borrower level still has room to improve. Among the tested models, 
-Random Forest outperformed Logistic Regression and provided a better balance between bad-borrower 
-capture and false positives. This makes it a more suitable model for credit screening, although it should 
-still be combined with policy rules rather than used alone. Data quality is another important limitation. 
-The dataset shows structural missingness, inconsistent field definitions, and some label conflicts. This 
-means stronger data governance is necessary before the bank can fully scale model-driven decisioning. 
-Under liquidity pressure, the portfolio should be managed using a controlled-max-return approach. 
-Loans should be selected based on risk-adjusted return rather than volume, while PD caps and 
-concentration limits should be applied to control tail risk. In customer management, not all churn should 
-be treated as negative. A large share of exits comes from normal loan payoff, so the bank should focus on 
-CLV-first retention, especially through pre-approved renewal and refinancing offers for good borrowers. 
-Looking forward, the bank should follow a staged data analytics roadmap. It is currently between 
-management reporting and predictive analytics integration. The next priorities are better data quality, 
-stronger governance, and embedding analytics into approval, pricing, retention, and portfolio allocation 
-workflows. Using Singapore as the reference market, the bank should expand selectively into 
-renewal/refinancing products, repayment-linked savings, and basic financial management tools, 
-rather than broad universal banking. LLM and Gen-AI should first be used in internal productivity and 
-decision support, such as reporting, customer service support, and collections workflow, before being 
-applied to more sensitive credit decisions. 
-In summary, the bank has a viable lending business, but profitability and resilience will depend on slower 
-growth, tighter risk control, better data governance, and more targeted product expansion.
+This suggests the bank corrected from growth-first expansion toward a healthier pace.
 
+### 2. Pricing is directionally risk-aligned, but tail risk remains undercompensated
+
+- Average pricing spread from grade A to G: `18.36pp`
+- Average bad-rate spread from grade A to G: `33.19pp`
+
+Higher-risk borrowers are charged higher rates, which is directionally correct. But the increase in default risk is steeper than the increase in pricing, especially in weaker segments, so yield quality should be monitored more carefully than headline margin.
+
+### 3. The project uses models with business intent, not just technical accuracy
+
+For bad-borrower screening under a recall-priority policy:
+
+- `Logistic Regression` achieved `Recall_bad = 0.8667`
+- `Random Forest` achieved higher `AUC = 0.7481`, but lower bad-borrower recall
+
+For churn prediction:
+
+- Selected model: `Random Forest`
+- Churn model `AUC = 0.9047`
+- Churn model `Recall = 0.9897`
+
+This is a strong project choice: the analysis does not pretend one metric or one model is always best. It matches evaluation to the decision context.
+
+### 4. Portfolio optimization is tied to capital reality
+
+Under a `50%` funding constraint:
+
+- Baseline expected profit: `4,503,927,727`
+- Optimized expected profit: `7,004,906,850`
+- Profit uplift: `+55.53%`
+- Profit-to-risk improvement: `+10.79%`
+
+This turns the project from descriptive analysis into an actionable allocation framework.
+
+### 5. Retention is prioritized by value, not just churn volume
+
+- Overall churn rate: `57.79%`
+- Top CLV-priority segment size: `5,000`
+- Average churn probability of top-priority customers: `67.17%`
+
+Instead of treating every exit the same way, the project recommends CLV-first intervention, especially for renewal and refinancing opportunities among stronger borrowers.
+
+### 6. Data quality is treated as a management issue
+
+The notebook does not ignore messy operational data. It explicitly flags structural missingness and consistency problems, including:
+
+- `annual_inc_joint` missing in `94.66%` of records
+- `mths_since_last_record` missing in `84.11%` of records
+- schema drift and cross-field consistency risks
+
+That makes the project more realistic, because real credit analytics only work when governance improves alongside modeling.
+
+## Business Recommendation
+
+The final recommendation is not to stop lending, but to run the portfolio with tighter discipline:
+
+- grow more selectively
+- price with stronger tail-risk awareness
+- use model outputs together with policy rules
+- optimize allocations by risk-adjusted return, not volume
+- build CLV-based retention programs instead of blanket churn prevention
+- strengthen data governance before scaling further automation
+
+## Methods Used
+
+- Exploratory business and risk trend analysis
+- Credit-grade and pricing relationship analysis
+- Recall-priority default modeling
+- Churn prediction and CLV-based prioritization
+- Data quality profiling
+- Portfolio optimization under capital constraints
+
+## Repository Contents
+
+- `DA5107_Submission_Complete.ipynb`: full integrated analysis notebook
+- `project_highlights_overview.svg`: visual summary for GitHub and presentation use
+- `README_EN.md`: project overview
+
+## How To Review
+
+1. Open `DA5107_Submission_Complete.ipynb`.
+2. Read the notebook in section order for the full management narrative.
+3. Use the overview figure above if you want a quick summary before diving into the details.
+
+## Portfolio Framing
+
+If this project is presented in a portfolio, its strongest story is:
+
+**not just "I built a model," but "I used analytics to decide how a lending business should grow, price risk, allocate capital, and retain valuable customers."**
